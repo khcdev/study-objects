@@ -6,18 +6,14 @@ public class TicketSeller {
     public TicketSeller(TicketOffice ticketOffice) {
         this.ticketOffice = ticketOffice;
     }
-    // getOffice() 메소드 제거
-
+    // 문제 해결2: TicketSeller의 Bag, Ticket에대한 의존 제거 (audience encapsulation)
+    /**
+     * -> TicketSeller는 audience의 인터페이스(buy)를 통해서만 소통
+     * -> audience가 어떻게 buy하는지 내부 구현에 대해서는 알 필요가 없어짐
+     * */
     public void sellTo(Audience audience) {
-        // ticketOffice의 접근은 TicketSeller를 통해서만 될 수 있도록 변경됨
-        if (audience.getBag().hasInvitation()) {
-            Ticket ticket = ticketOffice.getTicket();
-            audience.getBag().setTicket(ticket);
-        } else {
-            Ticket ticket = ticketOffice.getTicket();
-            audience.getBag().minusAmount(ticket.getFee());
-            ticketOffice.plusAmount(ticket.getFee());
-            audience.getBag().setTicket(ticket);
-        }
+        Ticket ticket = ticketOffice.getTicket();
+        Long fee = audience.buy(ticket);
+        ticketOffice.plusAmount(fee);
     }
 }
